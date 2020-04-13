@@ -36,6 +36,7 @@ su - harsh
 date
 #Try Executing Other Commands It Won't Work
 
+#Part-2 Root User Can't Execute date command
 #Editing Sudoers File To Change sudo Powers for root and harsh user
 
 su - root
