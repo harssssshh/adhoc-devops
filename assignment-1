@@ -1,0 +1,121 @@
+#Task-1
+#To Create A Directory Structure 
+mkdir -p A/{B/{D/{I/M/Z,J/L/Z},E/H/L/Z},C/{F/H/L/Z,G/K/L/Z}}
+
+
+#Task-2
+#Part-1 User Can Only Execute date command
+#To Create Own Bash Shell
+
+ln -s /bin/bash /bin/mybash
+
+#Creating New User & Assigning Custom Shell
+ 
+adduser --shell /bin/mybash --home /home/harsh harsh
+
+#Creating bin Directory & Linking Only date & sudo To Shell
+
+mkdir -p /home/harsh/bin && ln -s /bin/date /home/harsh/bin/date && ln -s /usr/bin/sudo /home/harsh/bin/sudo
+
+#Switching To Harsh User & Adding Custom Path To Shell
+
+su - harsh
+nano .profile
+### Editing .profile ### 
+PATH=$HOME/bin
+export PATH
+### Save It ###
+source ~/.bashrc
+#Changing Permissions & File Attributes
+chmod 755 .profile
+chattr +i .profile
+exit
+
+#Login Again
+su - harsh
+date
+#Try Executing Other Commands It Won't Work
+
+#Editing Sudoers File To Change sudo Powers for root and harsh user
+
+su - root
+nano /etc/sudoers
+
+#Make These Changes
+
+root ALL=(ALL:ALL) ALL, !/bin/date
+harsh ALL=(ALL:ALL) /bin/date
+%sudo   ALL=(ALL:ALL)  ALL, !/bin/date
+
+### Save It ###
+#Changing root permission to not excecute date
+chmod -x /bin/date
+
+##Trying It
+date
+sudo date
+
+
+
+#Task 3
+#Create Two Users And And Transfer Directories & Files To Each Other's Home Drirectory
+
+#Creating Two Users (First & Second)
+
+adduser --shell /bin/bash --home /home/first first
+adduser --shell /bin/bash --home /home/second second
+
+### Login First & Changing Directory Permissions ###
+
+su - first
+mkdir dir1 && cd dir1 && touch file1.txt
+setfacl -m u:second:rw /home/first/
+
+### Login Second & Changing Directory Permissions ###
+
+su - second
+mkdir dir2 && cd dir2 && touch file2.txt
+setfacl -m u:first:rw /home/second/
+
+#Copying Data From Second To First
+
+cp -r /home/second/dir2 /home/first/
+exit
+### Login To First
+su - first
+
+# Check Files 
+ls 
+
+#Copying To Second
+cp -r /home/first/dir1 /home/second
+exit
+#Logging Back To Second
+su - second
+#Check For dir1
+ls
+
+#Task-4 
+#Storing Output Of cal command from a shell to a file executing continuously for 10 seconds.
+
+#Creating a shell script
+nano cal.sh
+### Copy This ###
+
+#! /bin/bash
+#SECONDS is a variable that is automatically created on terminal session
+#You Can Check It By echo "Time: $SECONDS"
+limit=$((SECONDS+10))
+while [ $SECONDS -lt $limit ]; do
+   cal >> caloutput.txt
+done
+
+### Save It ###
+
+#Changing Executing Permission for user
+chmod +x cal.sh
+#Running It
+./cal.sh
+#Checking The Output
+cat caloutput.txt
+
