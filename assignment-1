@@ -59,7 +59,7 @@ sudo date
 
 
 #Task 3
-#Create Two Users And And Transfer Directories & Files To Each Other's Home Drirectory
+#Create Two Users & Transfer Directories & Files To Each Other's Home Drirectory
 
 #Creating Two Users (First & Second)
 
@@ -71,6 +71,7 @@ adduser --shell /bin/bash --home /home/second second
 su - first
 mkdir dir1 && cd dir1 && touch file1.txt
 setfacl -m u:second:rw /home/first/
+exit
 
 ### Login Second & Changing Directory Permissions ###
 
@@ -96,6 +97,7 @@ su - second
 #Check For dir1
 ls
 
+
 #Task-4 
 #Storing Output Of cal command from a shell to a file executing continuously for 10 seconds.
 
@@ -104,7 +106,7 @@ nano cal.sh
 ### Copy This ###
 
 #! /bin/bash
-#SECONDS is a variable that is automatically created on terminal session
+#SECONDS is a variable that is automatically created on terminal session start
 #You Can Check It By echo "Time: $SECONDS"
 limit=$((SECONDS+10))
 while [ $SECONDS -lt $limit ]; do
