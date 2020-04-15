@@ -1,0 +1,155 @@
+#Task-1
+#Using Python To Create Number Of Docker Containers i.e. 25 From Each (Alpine, Centos, Fedora, Java)
+
+#Switching To Root, Creating Python File & Installing Docker Python SDK
+
+su - root
+#To Start Docker Service Whenever System Starts
+sudo systemctl enable docker
+pip3 install docker 
+nano containers.py 
+
+### Editing File
+#Used Python Docker SDK To Create Containers
+import docker
+import time
+client = docker.from_env()
+#Checking For Images If Present Locally
+def image_checker():
+	print("Checking For Required Images Locally")
+	try:
+		alpine = client.images.get('alpine:latest')
+		fedora = client.images.get('fedora:latest')
+		centos = client.images.get('centos:latest')
+		openjdk = client.images.get('java:latest')
+		print("Found Images On The System")
+		run_containers()
+        #Throws Exception If Image Is Not Found
+	except docker.errors.ImageNotFound:
+		print("Image/Images Not Found Locally, Pulling It From Repository")
+		client.images.pull('alpine:latest')
+		client.images.pull('centos:latest')
+		client.images.pull('fedora:latest')
+		client.images.pull('java:latest')
+#Running Containers
+def run_containers():
+	try:
+        #Creating Alpine Containers Named From adhocnw1-adhocnw26
+		for i in range(1,26):
+			print("Creating Alpine Container adhocnw{}".format(i))
+			client.containers.run('alpine', command='ping google.com', detach=1, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
+			time.sleep(2)
+        #Creating Centos Containers Named From adhocnw26-adhocnw51    
+		for i in range(26,51):
+			print("Creating Centos Container adhocnw{}".format(i))
+			client.containers.run('centos', command='ping facebook.com', detach=1, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
+			time.sleep(3)
+        #Creating Fedora Containers Named From adhocnw51-adhocnw76     
+		for i in range(51,76):
+			print("Creating Fedora Container adhocnw{}".format(i))
+			client.containers.run('fedora', detach=1, tty=True, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
+			time.sleep(3)
+        #Creating Java Containers Named From adhocnw76-adhocnw101      
+		for i in range(76,101):
+			print("Creating Java Container adhocnw{}".format(i))
+			client.containers.run('java', detach=1, tty=True, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
+			time.sleep(3)
+        #Throws Exception If Images Are Not Found    
+	except 	docker.errors.ImageNotFound:
+		print("Images For Container Not Found, Checking Images Locally")
+		image_checker()
+        #Throws Exception If Container Configuration Is Not Correct
+	except docker.errors.ContainerError:
+		print("Container Exited With Some Errors")
+image_checker()		
+
+### Saving File ###
+#Running It
+python3 containers.py
+
+
+#Task-2 
+#To Save The Output Of Running Containers Filtered By Name adhocnw & created on in a Text File
+#Switching To Root
+su - root
+#Using awk To Filter Results
+
+docker ps --filter name=adhoc | awk '{if (NR!=1) print $NF, $(NF-6), $(NF-5), $(NF-4) }' > task2.txt
+
+#Checking File
+cat task2.txt
+
+#Task-3
+#To Run A Custom Image Container That Has Firefox As A Parent Process
+#Used Python Docker SDK
+#Switching To Root & Creating Directory
+su - root
+mkdir ubuntu && cd ubuntu
+
+#Creating a Dockerfile
+nano Dockerfile
+
+### Editing File ###
+#Using Ubuntu As Base OS
+FROM ubuntu
+#Installing Firefox 
+#As Docker Contianers Can't Access Display Of Host Machine Unless Mounted. 
+#Xvbf Enables Us To Run Graphical Applications Without a Display, In Our Case "Firefox".
+#D-Bus Is a Message Bus System, A Simple Way For Applications To Talk To One Another. It Helps Firefox To Pass Messgaes To Xvbf 
+RUN apt-get update && apt-get install firefox -y && apt-get install -y xvfb && apt-get install dbus-x11 -y
+#Not Me Really :3
+MAINTAINER hvkataria12@gmail.com
+#Running A Firefox Instance In A Container In A Window Of Resolution 1024x768 And Surfing google.com
+CMD xvfb-run -a -s "-screen 0 1024x768x24" firefox http://google.com 
+
+### Saving File ####
+
+### Creating A File To Build And Run The Container ###
+
+nano firefox.py
+### Editing File ###
+#Using Python SDK
+import docker
+client = docker.from_env()
+#Building Image
+def build_image():
+	try:
+		print("Building Your Awesome Container")
+		client.images.build(path='/home/harsh/Desktop/ubuntu/', tag='firedocker')
+        run_container()
+    except docker.errors.BuildError:
+		print("Check Your Configuration Before Building Image")	
+
+#Running Container
+def run_container():
+	print("Running Container")
+	try:
+		client.containers.run('firedocker', name='firedocker')
+		print("Successful!!")
+	except 	docker.errors.ImageNotFound:
+		print("Images For Container Not Found, Checking Images Locally")
+		build_image()
+	except docker.errors.ContainerError:
+		print("Container Exited With Some Errors")
+run_container()
+
+### Saving It ###
+#Don't Press Ctrl+C Or Close The Terminal The Container Will Be Stopped.
+#As You Won't Be Able To See The Window Of Running Instance Of Firefix You Can Still Check If The Container Is Running Firefox Instance Or Not.
+#Check It By Running Another Terminal
+su - root 
+docker exec -it firedocker top
+#Look For The Process Named Firefox, If it's Running Then You're Good To Go. 
+
+#Task-4
+#Storing Output Of Running Containers Stats Into ram.txt Filtered By CPU & RAM Usage.
+#Switching To Root
+
+su - root
+
+#awk to filter Results
+
+docker stats -a --no-trunc --no-stream | awk '{if (NR!=1) print $(NF-11), $(NF-10), $(NF-9), $(NF-8) }' > ram.txt
+
+#Checking File
+cat ram.txt
