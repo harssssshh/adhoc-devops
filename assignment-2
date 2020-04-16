@@ -34,22 +34,22 @@ def image_checker():
 #Running Containers
 def run_containers():
 	try:
-        #Creating Alpine Containers Named From adhocnw1-adhocnw26
+        #Creating Alpine Containers Named From adhocnw1-adhocnw25
 		for i in range(1,26):
 			print("Creating Alpine Container adhocnw{}".format(i))
 			client.containers.run('alpine', command='ping google.com', detach=1, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
 			time.sleep(2)
-        #Creating Centos Containers Named From adhocnw26-adhocnw51    
+        #Creating Centos Containers Named From adhocnw26-adhocnw50   
 		for i in range(26,51):
 			print("Creating Centos Container adhocnw{}".format(i))
 			client.containers.run('centos', command='ping facebook.com', detach=1, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
 			time.sleep(3)
-        #Creating Fedora Containers Named From adhocnw51-adhocnw76     
+        #Creating Fedora Containers Named From adhocnw51-adhocnw75     
 		for i in range(51,76):
 			print("Creating Fedora Container adhocnw{}".format(i))
 			client.containers.run('fedora', detach=1, tty=True, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
 			time.sleep(3)
-        #Creating Java Containers Named From adhocnw76-adhocnw101      
+        #Creating Java Containers Named From adhocnw76-adhocnw100     
 		for i in range(76,101):
 			print("Creating Java Container adhocnw{}".format(i))
 			client.containers.run('java', detach=1, tty=True, restart_policy={'Name': 'always'}, name='adhocnw{}'.format(i))
