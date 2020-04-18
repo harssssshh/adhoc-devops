@@ -94,7 +94,7 @@ nano Dockerfile
 FROM ubuntu
 #Installing Firefox 
 #As Docker Contianers Can't Access Display Of Host Machine Unless Mounted. 
-#Xvbf Enables Us To Run Graphical Applications Without a Display, In Our Case "Firefox".
+#Xvfb Enables Us To Run Graphical Applications Without a Display, In Our Case "Firefox".
 #D-Bus Is a Message Bus System, A Simple Way For Applications To Talk To One Another. It Helps Firefox To Pass Messgaes To Xvbf 
 RUN apt-get update && apt-get install firefox -y && apt-get install -y xvfb && apt-get install dbus-x11 -y
 #Not Me Really :3
