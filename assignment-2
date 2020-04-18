@@ -135,7 +135,7 @@ run_container()
 
 ### Saving It ###
 #Don't Press Ctrl+C Or Close The Terminal The Container Will Be Stopped.
-#As You Won't Be Able To See The Window Of Running Instance Of Firefix You Can Still Check If The Container Is Running Firefox Instance Or Not.
+#As You Won't Be Able To See The Window Of Running Instance Of Firefox You Can Still Check If The Container Is Running Firefox Instance Or Not.
 #Check It By Running Another Terminal
 su - root 
 docker exec -it firedocker top
