@@ -1,0 +1,59 @@
+#Task-2 
+#To Build A Docker Container That Runs Parent Docker Engine As The Container Docker Engine
+#Switching To Root
+
+su - root
+
+#Creating A Directory
+
+mkdir mydocker && cd mydocker
+
+#Creating A Dockerfile
+
+nano Dockerfile
+
+## Editing File ###
+
+FROM ubuntu
+#Adding Neccessary Dependencies 
+RUN apt-get update && apt-get install apt-transport-https ca-certificates  curl  gnupg-agent  software-properties-common -y
+#Adding Docker official GPG Key
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#Adding Repository Of Docker
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+#Installing Docker
+RUN apt-get update && apt-get install docker-ce docker-ce-cli -y
+
+### Saving It ###
+
+#Creating docker-compose to run build and run the containers
+
+nano docker-compose.yml
+
+### Editing File ###
+
+version: '3.8'
+services:
+ mydocker:
+  build: .
+  tty: true
+  image: mydocker
+  container_name: dockercon
+  volumes:
+   - /var/run/docker.sock:/var/run/docker.sock
+  network_mode: host
+
+### Saving File ###
+
+#Building And Runnning Container
+#To Run The Contnainer In Background
+docker-compose up --build -d
+
+#Open Shell In The Running Container
+
+docker-compose exec mydocker bash
+
+#Checking Host Images
+
+docker images
+docker ps -a
