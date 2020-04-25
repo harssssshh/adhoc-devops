@@ -57,3 +57,48 @@ docker-compose exec mydocker bash
 
 docker images
 docker ps -a
+
+
+#Task-4
+
+#To Run Root Commands By A Non-Root User In A Docker Container
+
+#Switching To Root & Creating A Dockerfile
+
+su - root 
+mkdir nonroot && cd nonroot
+nano Dockerfile
+
+### Editing File ###
+#Base Image Ubuntu
+FROM ubuntu
+RUN apt-get update
+#Installing sudo as it is not present by default
+RUN apt-get install sudo
+#Adding User Named harsh & Skipping the default prcocess of creating a user
+RUN adduser --disabled-password --gecos '' harsh
+#Adding User To sudo Group
+RUN adduser harsh sudo
+#Editing Sudo File To Allow Every Non-Root User To Access sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+#Switiching To User harsh
+USER harsh
+#Trying It With sudo
+RUN sudo apt-get update 
+
+### Saving File ###
+
+#Building The Image & Running The Container 
+
+docker build -t nonroot .
+docker run -it --name nonrootcont --network host nonroot
+
+#Try Creating A Folder Or Installing Utilities In / Directory Which Is Owned By Root User
+
+whoami
+sudo mkdir harsh 
+sudo apt-get install apache2 -y
+sudo service apache2 start
+
+
+#(Browse 127.0.0.1 Or localhost to see the content)
