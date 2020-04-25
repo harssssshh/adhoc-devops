@@ -9,7 +9,7 @@ nano Dockerfile
 ### Editing File ###
 #Base Image
 FROM ubuntu
-#Installing Necessary Utils
+#Installing Necessary Packages
 RUN apt-get update && apt-get install python3 python3-pip nano default-libmysqlclient-dev -y
 RUN mkdir djangoapp
 WORKDIR /djangoapp
@@ -75,7 +75,7 @@ docker-compose up --build
 docker exec -it djangocont bash
 
 #Inside Container
-cd mydjangoapp
+cd mydjangoapp/
 nano settings.py
 
 ###Edit File ###
@@ -93,7 +93,7 @@ DATABASES = {
 
 ### Saving File ###
 
-#Running Migration For MySQL 
+#Running Migration To Migrate Default Database Service To MySQL 
 cd ..
 python3 manage.py migrate
 #Creating Super User Under MySQL Container
@@ -113,7 +113,7 @@ SELECT * FROM auth_user;
 
 ### Check For Entries Of The User You Just Created In The Table ###
 exit
-
+### Login SuperUser By Browsing localhost:8080/admin 
 
 
 
@@ -145,7 +145,7 @@ RUN apt-get update && apt-get install docker-ce docker-ce-cli -y
 
 ### Saving It ###
 
-#Creating docker-compose to run build and run the containers
+#Creating docker-compose to build and run the containers
 
 nano docker-compose.yml
 
@@ -172,7 +172,7 @@ docker-compose up --build -d
 
 docker-compose exec mydocker bash
 
-#Checking Host Images
+#Checking For Images & Containers, It Will Be Of Parent Docker Engine
 
 docker images
 docker ps -a
@@ -214,7 +214,7 @@ docker pull v2tec/watchtower
 #Instructing Watchtower To Watch For Container Named autocont
 docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower autocont
 #(Watchtower Checks for image changes every 5 minutes by default)
-# Now In Host System Change The Content (In My Case, Just Editing The Success To Failed In index.html)
+# Now In Host System Change The Content Of index.html (In My Case, Just Editing The Success To Failed In index.html)
 
 cd web
 sed -i 's/Success/Failed/g' index.html
@@ -225,7 +225,7 @@ docker build -t harssssshh/autoimage .
 docker push harssssshh/autoimage
 
 #Now Watchtower Container Will Automatically Detect The Changes & Rebuilds The Container With New Image
-# You Can Check It Out The Logs Of Watchtower By
+# You Can Check Out The Logs Of Watchtower By
 docker logs watchtower
 
 
