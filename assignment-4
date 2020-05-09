@@ -33,6 +33,8 @@ nano containers.yaml
 ---
  - hosts: localhost
    tasks:
+    - name: Pulling Alpine Image
+      shell: docker pull alpine
     - name: Running Containers
       shell: python3 alpine.py
 
