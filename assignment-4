@@ -3,7 +3,7 @@
 #Switching To Root
 su - root
 #Creating Directory
-mkdir ubuntuansible && cd ubuntuansbile
+mkdir ubuntuansible && cd ubuntuansible
 
 #Creating Alpine Containers With Parent Process "ping fb.com" Using Python docker-sdk
 nano alpine.py
