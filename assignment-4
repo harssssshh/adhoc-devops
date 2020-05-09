@@ -1,0 +1,76 @@
+#Task
+#To Run 10 Alpine Containers Using Ansible-Playbook From The Host Docker Engine
+#Switching To Root
+su - root
+#Creating Directory
+mkdir ubuntuansible && cd ubuntuansbile
+
+#Creating Alpine Containers With Parent Process "ping fb.com" Using Python docker-sdk
+nano alpine.py
+
+### Editing File ###
+
+import docker
+import time
+client = docker.from_env()
+
+def run_containers():
+    try:
+        for i in range(1,11):
+            client.containers.run('alpine', command='ping fb.com', detach=1)
+            time.sleep(2)
+    except docker.errors.ImageNotFound:
+     pass
+run_containers()
+
+### Saving File ###
+
+#Creating Ansible Playbook To Run The Python Script
+nano containers.yaml
+
+### Editing File ###
+
+---
+ - hosts: localhost
+   tasks:
+    - name: Running Containers
+      shell: python3 alpine.py
+
+### Saving File ###
+
+#Creating Dockerfile
+nano Dockerfile
+
+### Editing File ###
+
+FROM ubuntu
+#Updating apt Repo 
+RUN apt-get update
+#Installing Docker
+RUN apt install docker.io -y
+#Installing Ansible 
+RUN apt install ansible -y
+#Installing pip & docker-sdk
+RUN apt install python3-pip -y
+RUN pip3 install docker
+#Changing WORKDIR
+WORKDIR /usr/local/share
+#Copying Files
+COPY containers.yaml alpine.py ./
+#Running Ansible Playbook
+CMD ansible-playbook containers.yaml
+
+### Saving File ###
+
+#Building Docker Image
+
+docker build -t ansdoc .
+
+#Running Docker Container
+
+docker run -it --name ansdoccont -v /var/run/docker.sock:/var/run/docker.sock ansdoc
+
+#Check If The Containers Are Created Or Not
+
+docker ps 
+
