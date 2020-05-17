@@ -1,0 +1,84 @@
+# Tasks
+
+# Creating A Persistent Volume to store data from pod to persistent volume
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: my-pvc
+spec:
+ accessModes:
+  - ReadWriteMany
+ storageClassName: standard
+ resources:
+  requests:
+   storage: 1Gi
+
+---
+# To Create a Pod with Alpine image running ping command as parent process and store result under /tmp/adhoc.txt 
+apiVersion: v1
+kind: Pod
+metadata:
+ labels: 
+  run: alpine
+ name: helloharsh
+spec:
+ volumes:
+  - name: share-data
+    persistentVolumeClaim:
+     claimName: 'my-pvc'
+ containers:
+  - image: alpine
+    name: alpinecont1
+    volumeMounts:
+     - name: share-data
+       mountPath: /tmp
+    command: ["/bin/sh"]
+    args: ["-c", "ping 8.8.8.8 -i 10 > /tmp/adhoc.txt"]
+ restartPolicy: OnFailure
+
+---
+#Copy Above file to /opt directory in this pod and count no. of characters and store in count.txt
+
+apiVersion: v1
+kind: Pod
+metadata:
+ labels:
+  run: busybox
+ name: hello1harsh
+spec:
+ volumes:
+  - name: share-volume1
+    persistentVolumeClaim:
+     claimName: 'my-pvc'
+ containers:
+  - image: busybox
+    name: busybox1
+    volumeMounts:
+     - name: share-volume1
+       mountPath: /opt
+    command: ["/bin/sh"]
+    args: ["-c", "wc -m /opt/adhoc.txt > /opt/count.txt"]
+ restartPolicy: OnFailure
+
+---
+#Create a pod and store the IP's of previous 2 pods under /root directory
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: hello2harsh
+  name: hello2harsh
+spec:
+  containers:
+  - image: alpine
+    name: hello2harsh
+    command: ["/bin/sh"]
+    args: ["-c", "tail -f /dev/null"]
+
+  restartPolicy: Never
+  
+### In Client Machine ###
+kubectl get pod -o wide | awk '{if (NR!=1) print $6}' > IP.txt
+kubectl cp IP.txt hello2harsh:/root/IP.txt
