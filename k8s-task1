@@ -104,6 +104,16 @@ spec:
 
 ### Save File ###
 
+#Creating pod from yaml
 
+kubectl create -f pod.yaml
 
+#Exposing Pod
 
+kubectl expose pod nginxpod --type NodePort --port 80
+
+#Getting Nodeport
+kubectl get svc
+
+# Visit URL Locally
+172.17.0.2:30154/index.html
