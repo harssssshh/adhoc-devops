@@ -9,8 +9,8 @@ nano getpods.sh
 
 ### Open File ###
 
-python3 listpods.py > index.html
-cp pods.html /usr/share/nginx/html/index.html
+python3 listpods.py > pods.html
+cp pods.html /usr/share/nginx/html/pods.html
 nginx -g "daemon off;"
 
 ### Saving File ###
@@ -117,3 +117,4 @@ kubectl get svc
 
 # Visit URL Locally
 172.17.0.2:30154/index.html
+172.17.0.2:30154/pods.html
